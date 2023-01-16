@@ -1,0 +1,16 @@
+type,	series,	model,	diagonal,	screen type,	country,	price
+Telephone,	S-10,	Samsung,	none,	OLED,	none,	7000
+Telephone,	Galaxy A,	Samsung,	none,	PLS,	none,	5500
+Telephone,	Galaxy S22, 	Samsung,	none,	Dynamic AMOLED,	none,	51000
+Telephone  ,	Redmi 10C,	Xiaomi,	none,	IPS,	none,	6300
+Telephone ,	G10,	Nokia,	none,	IPS,	none,	4500
+Telephone ,	Redmi 10,	Xiaomi,	none,	LCD,	none,	8600
+Television,	RTI-14,	none,	25,	LED,	China,	1500
+Television,	LS03,	none,	32,	QLED,	Hungary,	18000
+Television,	MiTV,	none,	55,	QLED,	China,	21000
+Television,	KD,	none,	75,	VA,	Japan,	81000
+Television,	UQ,	none,	55,	LCD,	Poland,	27700
+Television,	US,	none,	55,	LCD,	Poland,	24000
+
+
+
