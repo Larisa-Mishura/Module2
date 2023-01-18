@@ -24,8 +24,8 @@ public abstract class Product {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if ((this instanceof Television) && (o instanceof Television)) {
-            return equals((Television) o);
+        if ((this instanceof TV) && (o instanceof TV)) {
+            return equals((TV) o);
         } else if ((this instanceof Telephone) && (o instanceof Telephone)) {
             return equals((Telephone) o);
         } else {

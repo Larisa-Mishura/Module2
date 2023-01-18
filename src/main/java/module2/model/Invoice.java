@@ -1,22 +1,19 @@
 package module2.model;
 
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 import module2.repository.InvoiceRepository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
-@ToString
 @Getter
+@Setter
 public class Invoice <Product>{
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 4;
     final private List<Product> productList;
     final private Customer customer;
     private InvoiceType invoiceType;
+    private final Date data;  //TODO
 
     private static final InvoiceRepository INVOICE_REPOSITORY = InvoiceRepository.getInstance();
 
@@ -24,6 +21,7 @@ public class Invoice <Product>{
         this.customer = customer;
         this.productList = new ArrayList<>();
         this.invoiceType = InvoiceType.RETAIL;
+        this.data = new Date();
         //TODO Limit
     }
 
@@ -34,12 +32,32 @@ public class Invoice <Product>{
         }
     }
 
-    public void deleteFromInvoice(Product product){
+    /*public void deleteFromInvoice(Product product){
         productList.remove(product);
         if(productList.size() <= LIMIT){
             this.invoiceType = InvoiceType.RETAIL;
         }
+    }*/
+/*
+    @Override
+    public String toString() {
+        return "Invoice{" +
+                "productList=" + productList +
+                ", customer=" + customer +
+                ", invoiceType=" + invoiceType +
+                ", data=" + data +
+                '}';
+    }*/
+
+    public String toString() {
+        return data +
+                "   Invoice - " +
+                invoiceType +
+                "("  +
+                productList.size() +
+                " items)" +
+                "   productList=" + productList +
+                ", customer=" + customer +
+                '}';
     }
-
-
 }

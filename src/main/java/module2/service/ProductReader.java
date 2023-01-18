@@ -44,7 +44,7 @@ public class ProductReader {
         return map;
     }
 
-    public Product create(final String[] fields, Map<String, Integer> keyForField){
+    public Product create(final String[] fields, Map<String, Integer> keyForField) throws ObjectReaderException{
         final Product product;
         final String series = fields[keyForField.get("series")];
         final ScreenType screenType = EnumUtils.getEnum(ScreenType.class, fields[keyForField.get("screen type")], ScreenType.OTHERS);
@@ -52,13 +52,14 @@ public class ProductReader {
         if(fields[keyForField.get("type")].equals("Telephone")){
             final String model = fields[keyForField.get("model")];
             product = new Telephone(series, screenType, price, model);
-        } else if(fields[keyForField.get("type")].equals("Television")){
+        } else if(fields[keyForField.get("type")].equals("TV")){
             final int diagonal = Integer.parseInt(fields[keyForField.get("diagonal")]);
             final Country country = EnumUtils.getEnum(Country.class, fields[keyForField.get("country")]); //TODO
-            product = new Television(series, screenType, price, diagonal, country);
-        } else throw new RuntimeException(); //TODO
+            product = new TV(series, screenType, price, diagonal, country);
+        } else throw new ObjectReaderException("відсутня іформація щодо типу."); //TODO
         return product;
     }
+
 
     public List<Product> productsFromFile(String filename) {
         String text = "";
@@ -75,9 +76,15 @@ public class ProductReader {
         }
 
         List<Product> productsFromFileList = new LinkedList<>();
+
         for (int i = 1; i < fieldsForObjects.size(); i++) {
-            Product product = create(fieldsForObjects.get(i), keyForField);
-            productsFromFileList.add(product);
+            try {
+                Product product = create(fieldsForObjects.get(i), keyForField);
+                productsFromFileList.add(product);
+            } catch (ObjectReaderException e){
+                System.out.print("Обєкт не створено через некорекні дані в " + i + "-ому рядку - ");
+                System.out.println(e.getMessage());
+            }
         }
         return productsFromFileList;
     }

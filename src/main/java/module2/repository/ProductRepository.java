@@ -31,7 +31,7 @@ public class ProductRepository {
         return PRODUCTS;
     }
 
-    public Optional<Product> getByIndex(final int index) {
-        return Optional.of(PRODUCTS.get(index));
+    public Product getByIndex(final int index) {
+        return PRODUCTS.get(index);
     }     //TODO  Delete, getBy
 }

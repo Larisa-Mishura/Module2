@@ -6,7 +6,6 @@ import lombok.ToString;
 import java.util.UUID;
 
 @Getter
-@ToString
 public class Customer {
     protected final String id;
     protected String email;
@@ -16,5 +15,13 @@ public class Customer {
         this.id = UUID.randomUUID().toString();
         this.email = email;
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "email='" + email + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

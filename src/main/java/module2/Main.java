@@ -13,6 +13,17 @@ public class Main {
         shopService.getProductsFromFile("product.csv");
         shopService.printAll();
 
-        shopService.createRandomInvoice(new Customer("ss@ss", 15));
+        shopService.createRandomInvoices(6);
+
+        System.out.println(shopService.countForType());
+
+        shopService.totalAmount();
+
+        shopService.retailCount();
+
+        System.out.println(shopService.threeFirst());
+        System.out.println(shopService.youngeCustomers());
+
+        System.out.println(shopService.customerOfMinInvoice().toString());
     }
 }
