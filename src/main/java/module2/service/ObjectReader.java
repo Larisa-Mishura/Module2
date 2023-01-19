@@ -7,24 +7,24 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ProductReader {
+public class ObjectReader {
 
-    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
     private String textFromResourceFile(String filename){
         String result = "";
         try (final InputStream resourceAsStream = contextClassLoader.getResourceAsStream(filename)){
             int i;
-            while ((i = resourceAsStream.read()) != -1) {//TODO read lines
+            while ((i = resourceAsStream.read()) != -1) {
                 result = result + (char) i;
             }
         } catch (Exception e){
-            System.out.println("Файл не знайдено");
+            System.out.println("File is not found.");
         }
         return result.replaceAll("(\t)|(\r)|(\s\\B)|(\\B\s)", "");
     }
 
-    public List<String[]> getArrayFields(String text){     //TODO: private
+    private List<String[]> getArrayFields(String text){
         List<String[]> fieldsForObjects =
                 Arrays.stream(text.split("\n"))
                 .map(s -> s.split(","))
@@ -32,7 +32,7 @@ public class ProductReader {
         return fieldsForObjects;
     }
 
-    public Map<String, Integer> getIndexForField(String[] tableHeading){
+    private Map<String, Integer> getIndexForField(String[] tableHeading){
         final Map<String, Integer> map = new HashMap<>();
         for(int i = 0; i < tableHeading.length; i++){
             map.put(tableHeading[i].trim(), i);
@@ -40,30 +40,30 @@ public class ProductReader {
         return map;
     }
 
-    public Product create(final String[] fields, Map<String, Integer> keyForField) throws ObjectReaderException{
-        Product product = null;
+    private Item create(final String[] fields, Map<String, Integer> keyForField) throws ObjectReaderException{
+        Item item = null;
         try {
-            final ProductType productType = EnumUtils.getEnum(ProductType.class, fields[keyForField.get("type")].toUpperCase(Locale.ROOT));
+            final ItemType itemType = EnumUtils.getEnum(ItemType.class, fields[keyForField.get("type")].toUpperCase(Locale.ROOT));
             final String series = fields[keyForField.get("series")];
             final ScreenType screenType = EnumUtils.getEnum(ScreenType.class, fields[keyForField.get("screen type")].toUpperCase(Locale.ROOT));
             int price = Integer.parseInt(fields[keyForField.get("price")]);
-            if (productType == ProductType.TELEPHONE) {
+            if (itemType == ItemType.TELEPHONE) {
                 final String model = fields[keyForField.get("model")];
-                product = new Telephone(series, screenType, price, model);
+                item = new Telephone(series, screenType, price, model);
             }
-            if (productType == ProductType.TV) {
+            if (itemType == ItemType.TV) {
                 final int diagonal = Integer.parseInt(fields[keyForField.get("diagonal")]);
                 final Country country = EnumUtils.getEnum(Country.class, fields[keyForField.get("country")].toUpperCase(Locale.ROOT)); //TODO
-                product = new TV(series, screenType, price, diagonal, country);
+                item = new TV(series, screenType, price, diagonal, country);
             }
         } catch (Exception e){
             throw new ObjectReaderException();
         }
-        if (product == null) throw new ObjectReaderException();
-        return product;
+        if (item == null) throw new ObjectReaderException();
+        return item;
     }
 
-    public List<Product> productsFromFile(String filename) {
+    public List<Item> itemFromFile(String filename) {
         String text = textFromResourceFile(filename);
 
         List<String[]> fieldsForObjects = new ArrayList<>();
@@ -73,17 +73,17 @@ public class ProductReader {
             keyForField = getIndexForField(fieldsForObjects.get(0));
         }
 
-        List<Product> productsFromFileList = new LinkedList<>();
+        List<Item> itemsFromFileList = new LinkedList<>();
 
         for (int i = 1; i < fieldsForObjects.size(); i++) {
             try {
-                Product product = create(fieldsForObjects.get(i), keyForField);
-                productsFromFileList.add(product);
+                Item item = create(fieldsForObjects.get(i), keyForField);
+                itemsFromFileList.add(item);
             } catch (ObjectReaderException e){
-                System.out.println("Обєкт не створено через невірні дані в " + i + "-ому рядку."); //рядок не враховує заголовок таблиці
+                System.out.println("Object is not created because of incorrect data in " + (i+1) + " line.");
             }
         }
-        return productsFromFileList;
+        return itemsFromFileList;
     }
 }
 

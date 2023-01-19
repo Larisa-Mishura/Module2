@@ -1,8 +1,6 @@
 package module2.model;
 
 import lombok.Getter;
-import lombok.ToString;
-
 import java.util.UUID;
 
 @Getter

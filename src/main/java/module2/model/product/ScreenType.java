@@ -1,7 +1,7 @@
 package module2.model.product;
 
 public enum ScreenType {
-    AMOLED ("Amoled"),
+    AMOLED ("AMOLED"),
     DYNAMIC_AMOLED ("Dynamic AMOLED"),
     IPS ("IPS"),
     LCD ("LCD"),

@@ -3,37 +3,41 @@ package module2.service;
 import module2.model.Customer;
 import module2.model.Invoice;
 import module2.model.InvoiceType;
-import module2.model.product.Product;
-import module2.model.product.ProductType;
+import module2.model.product.Item;
+import module2.model.product.ItemType;
 import module2.repository.InvoiceRepository;
-import module2.repository.ProductRepository;
+import module2.repository.ItemRepository;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ShopService {
 
-    private final ProductRepository productRepository;
+    private final ItemRepository itemRepository = ItemRepository.getInstance();
     private final InvoiceRepository invoiceRepository;
-    private final PersonService personService;
 
-    InvoiceComparator invoiceComparator = new InvoiceComparator();
+    private final PersonService personService = new PersonService();
 
-    ProductReader reader = new ProductReader();
+    SumInvoiceComparator sumInvoiceComparator = new SumInvoiceComparator();
+
+    ObjectReader reader = new ObjectReader();
+
     Random random = new Random();
+
+    SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd.MM.yyyy   hh:mm:ss a zzz");
 
     private static ShopService instance;
 
-    private ShopService(final ProductRepository productRepository, final InvoiceRepository invoiceRepository) {
-        this.productRepository = productRepository;
+    private ShopService(final InvoiceRepository invoiceRepository) {
         this.invoiceRepository = invoiceRepository;
-        this.personService = new PersonService();
     }
 
     public static ShopService getInstance(){
         if (instance == null){
-            instance = new ShopService(ProductRepository.getInstance(), InvoiceRepository.getInstance());
+            instance = new ShopService(InvoiceRepository.getInstance());
         }
         return instance;
     }
@@ -46,110 +50,95 @@ public class ShopService {
 
     public void createRandomInvoice(){
         Invoice invoice = new Invoice(personService.randomCustomer());
-        int countOfProducts = productRepository.getAllProducts().size();
+        int countOfProducts = itemRepository.getAllProducts().size();
         int countOfPositions = 1 + random.nextInt(5);
         for(int i = 0; i < countOfPositions; i++) {
-            invoice.addToInvoice(productRepository.getByIndex(random.nextInt(countOfProducts)));
+            invoice.addToInvoice(itemRepository.getByIndex(random.nextInt(countOfProducts)));
         }
-        System.out.println(invoice.toString());
+        System.out.println(formatForDateNow.format(new Date()) + "  " + invoice.toString());
         invoiceRepository.save(invoice);
     }
 
-    public void saveProduct(Product... products) {
-        Arrays.stream(products)
-                .forEach(product -> productRepository.save(product));
+    public void saveProduct(Item... items) {
+        Arrays.stream(items)
+                .forEach(product -> itemRepository.save(product));
     }
 
 
     public void getProductsFromFile(String filename) {
-        List<Product> productsFromFileList = reader.productsFromFile(filename);
+        List<Item> productsFromFileList = reader.itemFromFile(filename);
         productsFromFileList.stream()
                 .peek(product -> System.out.println(product.toString()))
                 .forEach(product -> saveProduct(product));
     }
 
-    public Map<ProductType, Integer> countForType(){
-        Map<ProductType, Integer> map = invoiceRepository.getAllInvoices().stream()
+    public Map<ItemType, Integer> countByType(List<Invoice<Item>> list){//Кількість проданих товарів за категоріями (Telephone/Television)
+        return  list.stream()
                 .map(invoice -> invoice.getProductList())
-                .flatMap(List<Product>::stream)
+                .flatMap(List<Item>::stream)
                 .collect(Collectors.toMap(product -> product.getType(), product -> 1, (v1, v2) -> v1 + 1));
-        return map;
     }
 
-    public Customer customerOfMinInvoice(){//Суму найменшого чека та інформацію про покупця
-        Customer customer = invoiceRepository.getAllInvoices().stream()
-                .min(invoiceComparator)
+    public Customer customerOfTheLeastInvoice(List<Invoice<Item>> list){//Суму найменшого чека та інформацію про покупця
+        return   list.stream()
+                .min(sumInvoiceComparator)
                 .get().getCustomer();
-        return customer;
     }
 
-    public int totalAmount(){//Суму всіх покупок
-        int sum = invoiceRepository.getAllInvoices().stream()
+
+    public int totalAmount(List<Invoice<Item>> list){//Суму всіх покупок
+        return list.stream()
                 .map(invoice -> invoice.getProductList())
-                .flatMap(List<Product>::stream)
+                .flatMap(List<Item>::stream)
                 .map(product -> product.getPrice())
                 .reduce(0, (subtotal, element) -> subtotal + element);
-        return sum;
     }
 
-    public int retailCount(){//Кількість чеків з категорією retail
-        int count = (int) invoiceRepository.getAllInvoices().stream()
+    public int retailCount(List<Invoice<Item>> list){//Кількість чеків з категорією retail
+        return  (int) list.stream()
                 .map(invoice -> invoice.getInvoiceType())
                 .filter(type -> type == InvoiceType.RETAIL)
                 .count();
-        return count;
     }
 
-    //allMatch(Predicate predicate) - повертає true, якщо всі елементи стріму задовольняють умову;
-
-    public ArrayList<Invoice>  invoiceWithOneType(){//Чеки, які містять тільки один тип товару
-        Predicate<Invoice<Product>> typePredicate = invoice -> {
-            ProductType type = invoice.getProductList().get(0).getType();
+    public ArrayList<Invoice<Item>> invoiceWithOneType(List<Invoice<Item>> list){//Чеки, які містять тільки один тип товару
+        Predicate<Invoice<Item>> typePredicate = invoice -> {
+            final ItemType type = invoice.getProductList().get(0).getType();
             boolean result = invoice.getProductList().stream().allMatch(product -> product.getType()==type);
             return result;
         };
 
-        ArrayList<Invoice> list = invoiceRepository.getAllInvoices().stream()
+        return  list.stream()
                 .filter(typePredicate)
                 .collect(Collectors.toCollection(ArrayList::new));
-        return list;
     }
 
-    public ArrayList<Invoice> threeFirst(){//Перші три чеки зроблені покупцями
-        ArrayList<Invoice> list = invoiceRepository.getAllInvoices().stream()
+    public ArrayList<Invoice> threeFirst(List<Invoice<Item>> list){//Перші три чеки зроблені покупцями
+        return list
+                .stream()
                 .limit(3)
                 .collect(Collectors.toCollection(ArrayList::new));
-                return list;
     }
 
-    public ArrayList<Invoice> youngestCustomers(){//Інформацію по чеках куплених користувачем молодше 18 років, при цьому змінити тип чека на low_age
-        ArrayList<Invoice> list = invoiceRepository.getAllInvoices().stream()
+    public ArrayList<Invoice> youngCustomers(List<Invoice<Item>> list){//Інформацію по чеках куплених користувачем молодше 18 років, при цьому змінити тип чека на low_age
+        return list.stream()
                 .filter(invoice -> invoice.getCustomer().getAge() < 18)
-               .peek(invoice -> invoice.setInvoiceType(InvoiceType.LOW_AGE))
+                .peek(invoice -> invoice.setInvoiceType(InvoiceType.LOW_AGE))
                 .collect(Collectors.toCollection(ArrayList::new));
-        return list;
     }
 
-    //Написати метод, який сортує (будь-яким відомим способом) усі замовлення в
-    //такому порядку:
-    //○ Спочатку за віком покупця від більшого до меншого
-    //○ Далі за кількістю куплених предметів
-    //○ Далі за загальною сумою куплених предметів
-
-    public void sortInvoices() {
-        invoiceRepository.getAllInvoices().stream()
-                .sorted(new Comparator<Invoice>() {
-                    @Override
-                    public int compare(Invoice o1, Invoice o2) {
-                        return 0;
-                    }
-                });
+    public ArrayList<Invoice>  sortInvoices(List<Invoice<Item>> list) {
+        Collections.sort(list, (inv1, inv2) -> new CompareToBuilder()
+                .append(inv1.getCustomer().getAge(), inv2.getCustomer().getAge())
+                .append(inv1.getProductList().size(), inv2.getProductList().size())
+                .append(inv1.getProductList().stream().map(p -> p.getPrice()).count(),
+                        inv2.getProductList().stream().map(p -> p.getPrice()).count())
+                .toComparison());
+        return new ArrayList<>(list);
     }
 
-
-
-    public List<Product> getAllproducts() {
-        return productRepository.getAllProducts();
+    public List<Item> getAllproducts() {
+        return itemRepository.getAllProducts();
     }
 
     public void printAllProducts(){
@@ -157,7 +146,7 @@ public class ShopService {
         .forEach(product -> System.out.println(product.toString()));
     }
 
-    public List<Invoice<Product>> getAllinvoices() {
+    public List<Invoice<Item>> getAllinvoices() {
         return invoiceRepository.getAllInvoices();
     }
 
@@ -165,6 +154,4 @@ public class ShopService {
         getAllinvoices().stream()
                 .forEach(product -> System.out.println(product.toString()));
     }
-
-
 }

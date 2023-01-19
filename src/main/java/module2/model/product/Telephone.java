@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Telephone extends Product {
+public class Telephone extends Item {
 
     private final String model;
 
     public Telephone(String series, ScreenType screenType, int price, String model) {
-        super(ProductType.TELEPHONE, series, screenType, price);
+        super(ItemType.TELEPHONE, series, screenType, price);
         this.model = model;
     }
 

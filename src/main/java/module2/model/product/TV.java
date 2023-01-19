@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class TV extends Product{
+public class TV extends Item {
     private final int diagonal;
     private final Country country;
 
     public TV(String series, ScreenType screenType, int price, int diagonal, Country country) {
-        super(ProductType.TV, series, screenType, price);
+        super(ItemType.TV, series, screenType, price);
         this.diagonal = diagonal;
         this.country = country;
     }

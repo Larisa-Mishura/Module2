@@ -5,13 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Product {
-    protected final ProductType type;
+public abstract class Item {
+    protected final ItemType type;
     protected final String series;
     protected final ScreenType screenType;
     protected int price;
 
-    public Product(ProductType type, String series, ScreenType screenType, int price) {
+    public Item(ItemType type, String series, ScreenType screenType, int price) {
         this.type = type;
         this.series = series;
         this.screenType = screenType;

@@ -1,12 +1,10 @@
 package module2.action;
 
 import lombok.SneakyThrows;
-import module2.service.ShopService;
 import module2.util.UserInput;
 
-import java.sql.SQLOutput;
-
 public class ReadFileAction implements Action{
+
     @SneakyThrows
     @Override
     public void execute() {
@@ -16,12 +14,11 @@ public class ReadFileAction implements Action{
         String[] menu = {"Input name of file", "Default file - " + fileName};
         final int userChoice = UserInput.menu(menu);
 
-        int count;
+        //int count;  //TODO
         if (userChoice == 0) {
             System.out.println("Input name of file");
             fileName = UserInput.READER.readLine();
         }
-        ShopService shopService = ShopService.getInstance();
-        shopService.getProductsFromFile(fileName);
+        SHOP_SERVICE.getProductsFromFile(fileName);
     }
 }

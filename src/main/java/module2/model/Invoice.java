@@ -10,25 +10,21 @@ import java.util.*;
 @Setter
 public class Invoice <Product>{
     private static final int LIMIT = 4;
-    final private List<Product> productList;
+    private List<Product> productList;
     final private Customer customer;
     private InvoiceType invoiceType;
-    private Date data;  //TODO
-
-    private static final InvoiceRepository INVOICE_REPOSITORY = InvoiceRepository.getInstance();
 
     public Invoice(Customer customer) {
         this.customer = customer;
         this.productList = new ArrayList<>();
         this.invoiceType = InvoiceType.RETAIL;
-        this.data = new Date();
-        //TODO Limit
     }
 
     public Invoice(Customer customer, Product... products) {
         this.customer = customer;
         this.productList = new ArrayList<>();
-        this.invoiceType = InvoiceType.RETAIL;
+        productList = Arrays.asList(products);
+        this.invoiceType = products.length > 4 ? InvoiceType.WHOLESALES : InvoiceType.RETAIL;
     }
 
     public void addToInvoice(Product product){
@@ -38,26 +34,8 @@ public class Invoice <Product>{
         }
     }
 
-    /*public void deleteFromInvoice(Product product){
-        productList.remove(product);
-        if(productList.size() <= LIMIT){
-            this.invoiceType = InvoiceType.RETAIL;
-        }
-    }*/
-/*
-    @Override
     public String toString() {
-        return "Invoice{" +
-                "productList=" + productList +
-                ", customer=" + customer +
-                ", invoiceType=" + invoiceType +
-                ", data=" + data +
-                '}';
-    }*/
-
-    public String toString() {
-        return data +
-                "   Invoice - " +
+        return "   Invoice - " +
                 invoiceType +
                 "("  +
                 productList.size() +

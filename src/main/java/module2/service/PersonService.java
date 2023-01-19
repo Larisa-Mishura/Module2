@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class PersonService {
 
-    Random random = new Random();
+    private final Random random = new Random();
     private static final String charsWithNumbers = "abcdefghijklmnopqrstuvwxyzZ1234567890";
     private static final String chars = "abcdefghijklmnopqrstuvwxyz";
 
@@ -34,5 +34,4 @@ public class PersonService {
         final int randomAge = 12 + random.nextInt( 50);
         return randomAge;
     }
-
 }

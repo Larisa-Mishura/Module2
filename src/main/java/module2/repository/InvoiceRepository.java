@@ -1,14 +1,14 @@
 package module2.repository;
 
 import module2.model.Invoice;
-import module2.model.product.Product;
+import module2.model.product.Item;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class InvoiceRepository  {
 
-    private static final List<Invoice<Product>> INVOICES = new LinkedList<>();
+    private static final List<Invoice<Item>> INVOICES = new LinkedList<>();
 
     private static InvoiceRepository instance;
 
@@ -23,11 +23,11 @@ public class InvoiceRepository  {
         return instance;
     }
 
-    public void save(final Invoice<Product> invoice) {
+    public void save(final Invoice<Item> invoice) {
         INVOICES.add(invoice);
     }
 
-    public List<Invoice<Product>> getAllInvoices() {
+    public List<Invoice<Item>> getAllInvoices() {
         return INVOICES;
     }
 }

@@ -11,11 +11,11 @@ import java.io.InputStreamReader;
 public class UserInput {
     public static final BufferedReader READER = new BufferedReader(new InputStreamReader(System.in));
 
-    @SneakyThrows           //Todo
+    @SneakyThrows
     public static int menu(final String[] names) {
         int userChoice = -1;
         do {
-            System.out.println("Write what do you want to do");
+            System.out.println("Write what you want to do");
             for (int i = 0; i < names.length; i++) {
                 System.out.println(i + "  " + names[i]);
             }
@@ -38,16 +38,6 @@ public class UserInput {
 
         } while (!StringUtils.isNumeric(line));
         return Integer.parseInt(line);
-    }
-
-    private static String[] mapActionsToNames(final Actions[] values){
-        String[] names = new String[values.length];
-        //System.out.println("What do you want to do?");
-        for (int i = 0; i < values.length; i++) {
-            //System.out.println(i + "  " + values[i].getName());
-            names[i] = values[i].getName();
-        }
-        return names;
     }
 }
 
