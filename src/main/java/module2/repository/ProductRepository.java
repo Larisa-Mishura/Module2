@@ -1,10 +1,9 @@
 package module2.repository;
 
-import module2.product.Product;
+import module2.model.product.Product;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ProductRepository {
 
@@ -27,11 +26,11 @@ public class ProductRepository {
         PRODUCTS.add(product);
     }
 
-    public List<Product> getAll() {
+    public List<Product> getAllProducts() {
         return PRODUCTS;
     }
 
     public Product getByIndex(final int index) {
         return PRODUCTS.get(index);
-    }     //TODO  Delete, getBy
+    }
 }

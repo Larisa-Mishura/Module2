@@ -13,7 +13,7 @@ public class Invoice <Product>{
     final private List<Product> productList;
     final private Customer customer;
     private InvoiceType invoiceType;
-    private final Date data;  //TODO
+    private Date data;  //TODO
 
     private static final InvoiceRepository INVOICE_REPOSITORY = InvoiceRepository.getInstance();
 
@@ -23,6 +23,12 @@ public class Invoice <Product>{
         this.invoiceType = InvoiceType.RETAIL;
         this.data = new Date();
         //TODO Limit
+    }
+
+    public Invoice(Customer customer, Product... products) {
+        this.customer = customer;
+        this.productList = new ArrayList<>();
+        this.invoiceType = InvoiceType.RETAIL;
     }
 
     public void addToInvoice(Product product){

@@ -1,6 +1,7 @@
 package module2.util;
 
 import lombok.SneakyThrows;
+import module2.action.Actions;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -10,7 +11,7 @@ import java.io.InputStreamReader;
 public class UserInput {
     public static final BufferedReader READER = new BufferedReader(new InputStreamReader(System.in));
 
-    @SneakyThrows           //Todo check
+    @SneakyThrows           //Todo
     public static int menu(final String[] names) {
         int userChoice = -1;
         do {
@@ -27,18 +28,26 @@ public class UserInput {
         System.out.println("User choice: " + userChoice);
         return userChoice;
     }
-/*
+
+    @SneakyThrows
     public static int getInt(final String option){
         String line;
         do{
-            try{  //  замість @SneakyThrows
-                System.out.println(option);
-                line = READER.readLine();
-            } catch (IOException e){
-                throw new RuntimeException();
-            }
+            System.out.println(option);
+            line = READER.readLine();
+
         } while (!StringUtils.isNumeric(line));
         return Integer.parseInt(line);
-    }*/
+    }
+
+    private static String[] mapActionsToNames(final Actions[] values){
+        String[] names = new String[values.length];
+        //System.out.println("What do you want to do?");
+        for (int i = 0; i < values.length; i++) {
+            //System.out.println(i + "  " + values[i].getName());
+            names[i] = values[i].getName();
+        }
+        return names;
+    }
 }
 

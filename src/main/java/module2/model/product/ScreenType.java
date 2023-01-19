@@ -1,4 +1,4 @@
-package module2.product;
+package module2.model.product;
 
 public enum ScreenType {
     AMOLED ("Amoled"),

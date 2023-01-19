@@ -1,12 +1,10 @@
-package module2.product;
+package module2.model.product;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public abstract class Product {
     protected final ProductType type;
     protected final String series;
@@ -21,15 +19,12 @@ public abstract class Product {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if ((this instanceof TV) && (o instanceof TV)) {
-            return equals((TV) o);
-        } else if ((this instanceof Telephone) && (o instanceof Telephone)) {
-            return equals((Telephone) o);
-        } else {
-            return false;
-        }
+    public String toString() {
+        return "Product  {" +
+                "type=" + type +
+                ", series='" + series + '\'' +
+                ", screenType=" + screenType +
+                ", price=" + price +
+                '}';
     }
 }
