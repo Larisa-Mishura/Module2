@@ -1,18 +1,26 @@
 package module2;
 
-import module2.action.Action;
-import module2.model.Customer;
-import module2.service.ShopService;
+import module2.action.Actions;
+import module2.util.UserInput;
 
-import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        ShopService shopService = ShopService.getInstance();
-        shopService.getProductsFromFile("product.csv");
-        shopService.printAll();
+    public static void main(String[] args){
+        final Actions[] values = Actions.values();
+        final String[] names = mapActionsToNames(values);
 
-        shopService.createRandomInvoice(new Customer("ss@ss", 15));
+        while (true) {
+            final int userChoice = UserInput.menu(names);
+            values[userChoice].execute();
+        }
+    }
+
+        private static String[] mapActionsToNames(final Actions[] values){
+        String[] names = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            names[i] = values[i].getName();
+        }
+        return names;
     }
 }

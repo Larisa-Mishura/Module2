@@ -1,9 +1,8 @@
-package module2.product;
+package module2.model.product;
 
 public enum Country {
 
     CHINA ("China"),
-    CROATIA ("Croatia"),
     DENMARK ("Denmark"),
     GERMANY ("Germany"),
     HUNGARY ("Hungary"),
